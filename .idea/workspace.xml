@@ -4,20 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="018fe7f6-42ae-4ccf-b9f6-c633b84cc1a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/domain/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/ClientRunnable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/Observable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/Observer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/ServerService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/ServerServiceImpl.java" afterDir="false" />
+    <list default="true" id="018fe7f6-42ae-4ccf-b9f6-c633b84cc1a5" name="Changes" comment="Base commit">
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/dao/UserDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/dao/UserDaoImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/utils/Props.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/itsjava/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/Application.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/itsjava/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/ClientRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/ClientRunnable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/ServerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/itsjava/services/ServerServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +44,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/dmark/IdeaProjects/java-online-project/client-chat"
+    "last_opened_file_path": "C:/Users/dmark/IdeaProjects/first-app/java-foundations-online"
   }
 }]]></component>
   <component name="RunManager">
@@ -80,6 +76,21 @@
       <option name="presentableId" value="Default" />
       <updated>1683423188481</updated>
     </task>
+    <task id="LOCAL-00001" summary="Chat 4">
+      <created>1683424025720</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1683424025720</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Base commit">
+      <created>1683424038569</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1683424038569</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -92,5 +103,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Chat 4" />
+    <MESSAGE value="Base commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Base commit" />
   </component>
 </project>
