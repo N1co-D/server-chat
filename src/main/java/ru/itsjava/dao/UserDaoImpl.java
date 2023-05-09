@@ -29,10 +29,60 @@ public class UserDaoImpl implements UserDao {
             if (userCount == 1) {
                 return new User(name, password);
             }
+            else {
+                newUserRegistration(name, password);
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        throw new RuntimeException("User not found!");
+        throw new UserNotFoundException("User not found!");
     }
+
+    @Override
+    public User newUserRegistration(String name, String password) {
+        if (!isUsernameTaken(name)) {
+            try (Connection connection = DriverManager.getConnection(
+                    props.getValue("db.url"),
+                    props.getValue("db.login"),
+                    props.getValue("db.password"));
+            ) {
+                PreparedStatement preparedStatement = connection.prepareStatement("insert into schema_java.users (name, password) values (?, ?);");
+                preparedStatement.setString(1, name);
+                preparedStatement.setString(2, password);
+
+                preparedStatement.executeUpdate();
+                preparedStatement.close();
+                System.out.println("Регистрация прошла успешно!");
+                return new User(name, password);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new UserALreadyExistException("User already exists!");
+        }
+    }
+
+    private boolean isUsernameTaken(String name) {
+        try (Connection connection = DriverManager.getConnection(
+                props.getValue("db.url"),
+                props.getValue("db.login"),
+                props.getValue("db.password"));
+        ) {
+            PreparedStatement preparedStatement = connection.prepareStatement("select count(*) cnt from schema_java.users where name = ?");
+
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int count = resultSet.getInt(1);
+            resultSet.close();
+            preparedStatement.close();
+            return count > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
 

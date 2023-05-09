@@ -3,9 +3,7 @@ package ru.itsjava.services;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import ru.itsjava.dao.UserDao;
-import ru.itsjava.dao.UserDaoImpl;
 import ru.itsjava.domain.User;
-import ru.itsjava.utils.Props;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,6 +29,14 @@ public class ClientRunnable implements Runnable, Observer {
                 System.out.println(user.getName() + ": " + messageFromClient);
                 serverService.notifyObserverExpectMe(this,(user.getName() + ":" + messageFromClient));
             }
+        } else {
+            if (registration(bufferedReader)) {
+                serverService.addObserver(this);
+                while ((messageFromClient = bufferedReader.readLine()) != null) {
+                    System.out.println(user.getName() + ": " + messageFromClient);
+                    serverService.notifyObserverExpectMe(this, (user.getName() + ":" + messageFromClient));
+                }
+            }
         }
     }
 
@@ -43,6 +49,20 @@ public class ClientRunnable implements Runnable, Observer {
                 String login = authorizationMessage.substring(7).split(":")[0];
                 String password = authorizationMessage.substring(7).split(":")[1];
                 user = userDao.findByNameAndPassword(login, password);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SneakyThrows
+    private boolean registration(BufferedReader bufferedReader) {
+        String registrationMessage;
+        while ((registrationMessage = bufferedReader.readLine()) != null) {
+            if (registrationMessage.startsWith("!regist!")) {
+                String login = registrationMessage.substring(8).split(":")[0];
+                String password = registrationMessage.substring(8).split(":")[1];
+                user = userDao.newUserRegistration(login, password);
                 return true;
             }
         }
