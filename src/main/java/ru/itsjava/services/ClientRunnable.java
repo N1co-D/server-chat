@@ -2,7 +2,10 @@ package ru.itsjava.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import ru.itsjava.dao.UserDao;
+import ru.itsjava.dao.UserDaoImpl;
 import ru.itsjava.domain.User;
+import ru.itsjava.utils.Props;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,13 +17,14 @@ public class ClientRunnable implements Runnable, Observer {
     private final Socket socket;
     private final ServerService serverService;
     private User user;
+    private final UserDao userDao;
 
     @SneakyThrows
     @Override
     public void run() {
         System.out.println("Client connected");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String messageFromClient = null;
+        String messageFromClient;
         if (authorization(bufferedReader)) {
             serverService.addObserver(this);
             while ((messageFromClient = bufferedReader.readLine()) != null) {
@@ -38,7 +42,7 @@ public class ClientRunnable implements Runnable, Observer {
             if (authorizationMessage.startsWith("!autho!")) {
                 String login = authorizationMessage.substring(7).split(":")[0];
                 String password = authorizationMessage.substring(7).split(":")[1];
-                user = new User(login, password);
+                user = userDao.findByNameAndPassword(login, password);
                 return true;
             }
         }
