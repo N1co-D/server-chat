@@ -28,14 +28,11 @@ public class UserDaoImpl implements UserDao {
 
             if (userCount == 1) {
                 return new User(name, password);
-            } else {
-                newUserRegistration(name, password);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return newUserRegistration(name, password);
-//        throw new UserNotFoundException("User not found!");
     }
 
     @Override
@@ -54,8 +51,8 @@ public class UserDaoImpl implements UserDao {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-//        } else {
-//            throw new UserALreadyExistException("User already exists!");
+        } else {
+            throw new UserALreadyExistException("User already exists!");
         }
         return new User(name, password);
     }
