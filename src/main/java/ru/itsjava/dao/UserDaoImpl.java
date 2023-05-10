@@ -28,14 +28,14 @@ public class UserDaoImpl implements UserDao {
 
             if (userCount == 1) {
                 return new User(name, password);
-            }
-            else {
+            } else {
                 newUserRegistration(name, password);
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        throw new UserNotFoundException("User not found!");
+        return newUserRegistration(name, password);
+//        throw new UserNotFoundException("User not found!");
     }
 
     @Override
@@ -49,19 +49,21 @@ public class UserDaoImpl implements UserDao {
                 PreparedStatement preparedStatement = connection.prepareStatement("insert into schema_java.users (name, password) values (?, ?);");
                 preparedStatement.setString(1, name);
                 preparedStatement.setString(2, password);
-
                 preparedStatement.executeUpdate();
-                preparedStatement.close();
-                System.out.println("Регистрация прошла успешно!");
-                return new User(name, password);
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            throw new UserALreadyExistException("User already exists!");
+//        } else {
+//            throw new UserALreadyExistException("User already exists!");
         }
+        return new User(name, password);
     }
+
+    //                preparedStatement.executeUpdate();
+//                preparedStatement.close();
+//                System.out.println("Регистрация прошла успешно!");
+//                return new User(name, password);
 
     private boolean isUsernameTaken(String name) {
         try (Connection connection = DriverManager.getConnection(

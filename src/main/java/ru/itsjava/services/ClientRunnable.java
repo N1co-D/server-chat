@@ -22,23 +22,47 @@ public class ClientRunnable implements Runnable, Observer {
     public void run() {
         System.out.println("Client connected");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        String messageFromClient;
-        if (authorization(bufferedReader)) {
+        String messageFromClient = bufferedReader.readLine();
+
+        if (messageFromClient != null && messageFromClient.startsWith("!autho!")) {
+            String login = messageFromClient.substring(7).split(":")[0];
+            String password = messageFromClient.substring(7).split(":")[1];
+            user = userDao.findByNameAndPassword(login, password);
             serverService.addObserver(this);
+
             while ((messageFromClient = bufferedReader.readLine()) != null) {
                 System.out.println(user.getName() + ": " + messageFromClient);
-                serverService.notifyObserverExpectMe(this,(user.getName() + ":" + messageFromClient));
+                serverService.notifyObserverExpectMe(this, (user.getName() + ":" + messageFromClient));
             }
-        } else {
-            if (registration(bufferedReader)) {
-                serverService.addObserver(this);
-                while ((messageFromClient = bufferedReader.readLine()) != null) {
-                    System.out.println(user.getName() + ": " + messageFromClient);
-                    serverService.notifyObserverExpectMe(this, (user.getName() + ":" + messageFromClient));
-                }
+
+        } else if ((messageFromClient.startsWith("!reg!"))) {
+            String newLogin = messageFromClient.substring(5).split(":")[0];
+            String newPassword = messageFromClient.substring(5).split(":")[1];
+            user = userDao.newUserRegistration(newLogin, newPassword);
+            serverService.addObserver(this);
+
+            while ((messageFromClient = bufferedReader.readLine()) != null) {
+                System.out.println(user.getName() + ": " + messageFromClient);
+                serverService.notifyObserverExpectMe(this, (user.getName() + ":" + messageFromClient));
             }
         }
     }
+
+//        if (authorization(bufferedReader)) {
+//            serverService.addObserver(this);
+//            while ((messageFromClient = bufferedReader.readLine()) != null) {
+//                System.out.println(user.getName() + ": " + messageFromClient);
+//                serverService.notifyObserverExpectMe(this,(user.getName() + ":" + messageFromClient));
+//            }
+//        } else {
+//            if (registration(bufferedReader)) {
+//                serverService.addObserver(this);
+//                while ((messageFromClient = bufferedReader.readLine()) != null) {
+//                    System.out.println(user.getName() + ": " + messageFromClient);
+//                    serverService.notifyObserverExpectMe(this, (user.getName() + ":" + messageFromClient));
+//                }
+//            }
+//        }
 
     @SneakyThrows
     private boolean authorization(BufferedReader bufferedReader) {
