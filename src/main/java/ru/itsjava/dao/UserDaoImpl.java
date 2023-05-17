@@ -1,14 +1,22 @@
 package ru.itsjava.dao;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import ru.itsjava.domain.User;
 import ru.itsjava.utils.Props;
 
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.sql.*;
 
 @AllArgsConstructor
 public class UserDaoImpl implements UserDao {
     private final Props props;
+    private Socket socket;
+
+    public UserDaoImpl(Props props) {
+        this.props = props;
+    }
 
     @Override
     public User findByNameAndPassword(String name, String password) {
@@ -35,6 +43,7 @@ public class UserDaoImpl implements UserDao {
         return newUserRegistration(name, password);
     }
 
+    @SneakyThrows
     @Override
     public User newUserRegistration(String name, String password) {
         if (!isUsernameTaken(name)) {
@@ -52,15 +61,13 @@ public class UserDaoImpl implements UserDao {
                 throw new RuntimeException(e);
             }
         } else {
+            PrintWriter clientWriter = new PrintWriter(socket.getOutputStream());
+            clientWriter.println("Пользователь с таким логином уже существует. Пройдите повторную авторизацию!");
+            clientWriter.flush();
             throw new UserALreadyExistException("User already exists!");
         }
         return new User(name, password);
     }
-
-//                preparedStatement.executeUpdate();
-//                preparedStatement.close();
-//                System.out.println("Регистрация прошла успешно!");
-//                return new User(name, password);
 
     private boolean isUsernameTaken(String name) {
         try (Connection connection = DriverManager.getConnection(
