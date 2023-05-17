@@ -1,21 +1,30 @@
 package ru.itsjava.services;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import ru.itsjava.dao.UserDao;
 import ru.itsjava.domain.User;
+import ru.itsjava.utils.Props;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
-@RequiredArgsConstructor
 public class ClientRunnable implements Runnable, Observer {
     private final Socket socket;
     private final ServerService serverService;
     private User user;
     private final UserDao userDao;
+    private File chattingHistory = new File("C:\\Users\\dmark\\IdeaProjects\\java-online-project\\server-chat\\server-chat\\src\\main\\resources\\chattingHistory.txt");
+    private final MessageDao messageDao;
+    private final List<String> messageList = new ArrayList<>();
+
+    public ClientRunnable(Socket socket, ServerService serverService, UserDao userDao) {
+        this.socket = socket;
+        this.serverService = serverService;
+        this.userDao = userDao;
+        this.messageDao = new MessageDaoImpl(new Props());
+    }
 
     @SneakyThrows
     @Override
@@ -33,6 +42,15 @@ public class ClientRunnable implements Runnable, Observer {
             while ((messageFromClient = bufferedReader.readLine()) != null) {
                 System.out.println(user.getName() + ": " + messageFromClient);
                 serverService.notifyObserverExpectMe(this, (user.getName() + ":" + messageFromClient));
+
+                PrintWriter printWriter = new PrintWriter(new FileWriter(chattingHistory, true));
+                printWriter.println(user.getName() + ":" + messageFromClient);
+                printWriter.close();
+
+                synchronized (messageList) {
+                    messageList.add(messageFromClient);
+                    chatLogging(messageList);
+                }
             }
 
         } else if ((messageFromClient.startsWith("!reg!"))) {
@@ -44,9 +62,44 @@ public class ClientRunnable implements Runnable, Observer {
             while ((messageFromClient = bufferedReader.readLine()) != null) {
                 System.out.println(user.getName() + ": " + messageFromClient);
                 serverService.notifyObserverExpectMe(this, (user.getName() + ":" + messageFromClient));
+
+                PrintWriter printWriter = new PrintWriter(chattingHistory);
+                printWriter.println(user.getName() + ":" + messageFromClient);
+
+                synchronized (messageList) {
+                    messageList.add(messageFromClient);
+                    chatLogging(messageList);
+                }
             }
         }
     }
+
+    public void chatLogging(List<String> messagesToWrite) {
+
+        synchronized (messageList) {
+            // Создаем копию списка сообщений для записи
+            messagesToWrite = new ArrayList<>(messageList);
+            messageList.clear();
+        }
+
+        for (String message : messagesToWrite) {
+            messageDao.insertMessageToDatabase(user.getName(), message);
+        }
+        messagesToWrite.clear();
+    }
+
+    @SneakyThrows
+    @Override
+    public void notifyMe(String message) {
+        PrintWriter clientWriter = new PrintWriter(socket.getOutputStream());
+        clientWriter.println(message);
+        clientWriter.flush();
+        synchronized (messageList) {
+            messageList.add(message); // Добавляем сообщение в список для записи в базу данных
+        }
+    }
+}
+
 
 //        if (authorization(bufferedReader)) {
 //            serverService.addObserver(this);
@@ -63,41 +116,33 @@ public class ClientRunnable implements Runnable, Observer {
 //                }
 //            }
 //        }
+//
+//    @SneakyThrows
+//    private boolean authorization(BufferedReader bufferedReader) {
+//        String authorizationMessage;
+//        while ((authorizationMessage = bufferedReader.readLine()) != null) {
+//            //!autho!login:password
+//            if (authorizationMessage.startsWith("!autho!")) {
+//                String login = authorizationMessage.substring(7).split(":")[0];
+//                String password = authorizationMessage.substring(7).split(":")[1];
+//                user = userDao.findByNameAndPassword(login, password);
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-    @SneakyThrows
-    private boolean authorization(BufferedReader bufferedReader) {
-        String authorizationMessage;
-        while ((authorizationMessage = bufferedReader.readLine()) != null) {
-            //!autho!login:password
-            if (authorizationMessage.startsWith("!autho!")) {
-                String login = authorizationMessage.substring(7).split(":")[0];
-                String password = authorizationMessage.substring(7).split(":")[1];
-                user = userDao.findByNameAndPassword(login, password);
-                return true;
-            }
-        }
-        return false;
-    }
+//    @SneakyThrows
+//    private boolean registration(BufferedReader bufferedReader) {
+//        String registrationMessage;
+//        while ((registrationMessage = bufferedReader.readLine()) != null) {
+//            if (registrationMessage.startsWith("!regist!")) {
+//                String login = registrationMessage.substring(8).split(":")[0];
+//                String password = registrationMessage.substring(8).split(":")[1];
+//                user = userDao.newUserRegistration(login, password);
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
-    @SneakyThrows
-    private boolean registration(BufferedReader bufferedReader) {
-        String registrationMessage;
-        while ((registrationMessage = bufferedReader.readLine()) != null) {
-            if (registrationMessage.startsWith("!regist!")) {
-                String login = registrationMessage.substring(8).split(":")[0];
-                String password = registrationMessage.substring(8).split(":")[1];
-                user = userDao.newUserRegistration(login, password);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @SneakyThrows
-    @Override
-    public void notifyMe(String message) {
-        PrintWriter clientWriter = new PrintWriter(socket.getOutputStream());
-        clientWriter.println(message);
-        clientWriter.flush();
-    }
-}

@@ -1,0 +1,28 @@
+123:hello
+123:hey
+123:Hello
+Alex:Hey
+Alex:How are you?
+123:Fine
+123:Ty
+123:hi again
+123:how are you
+alex:Im good!
+alex:What a nice day!
+123:Java
+123:Hi!!!
+123:java is better
+123:yep
+123:and what now?
+123:tell me
+123:eeeee
+123:sql
+123:work
+123:please
+123:sql
+123:please
+123:work
+123:sql
+123:hello
+1:finally
+1:I did it!!!

@@ -57,7 +57,7 @@ public class UserDaoImpl implements UserDao {
         return new User(name, password);
     }
 
-    //                preparedStatement.executeUpdate();
+//                preparedStatement.executeUpdate();
 //                preparedStatement.close();
 //                System.out.println("Регистрация прошла успешно!");
 //                return new User(name, password);
@@ -81,7 +81,6 @@ public class UserDaoImpl implements UserDao {
             throw new RuntimeException(e);
         }
     }
-
 
 }
 
