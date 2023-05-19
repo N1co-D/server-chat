@@ -20,17 +20,13 @@ public class ClientRunnable implements Runnable, Observer {
     private final List<String> messageList = new ArrayList<>();
     private final PrintWriter printWriter;
 
+@SneakyThrows
     public ClientRunnable(Socket socket, ServerService serverService, UserDao userDao) {
         this.socket = socket;
         this.serverService = serverService;
         this.userDao = userDao;
         this.messageDao = new MessageDaoImpl(new Props());
-
-        try {
-            printWriter = new PrintWriter(socket.getOutputStream(), true);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create PrintWriter", e);
-        }
+        printWriter = new PrintWriter(socket.getOutputStream(), true);
     }
 
     @SneakyThrows
